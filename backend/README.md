@@ -1,35 +1,67 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Backend setup
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Backend API
 
-## Description
+## Yêu cầu hệ thống
+- Node.js
+- SQL Server
+- npm hoặc yarn
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Cài đặt
 
-## Project setup
+### 1. Cấu hình Database
 
-```bash
-$ npm install
+#### 1.1. Tạo Database và User
+1. Mở SQL Server Management Studio
+2. Kết nối với SQL Server của bạn
+3. Mở file `sql/init.sql` và chạy các câu lệnh SQL để:
+   - Tạo database REDDB
+   - Tạo user red_user với password kCKTXxjrMkLNvD89
+   - Cấp quyền db_owner cho user
+
+#### 1.2. Cấu hình Kết Nối
+1. Tạo file `.env` trong thư mục gốc của project với nội dung:
+```env
+DB_HOST=localhost
+DB_PORT=1433
+DB_USERNAME=red_user
+DB_PASSWORD=kCKTXxjrMkLNvD89
+DB_DATABASE=REDDB
 ```
+
+### 2. Cài đặt Dependencies
+```bash
+npm install
+```
+
+### 3. Chạy Chương Trình
+```bash
+npm start
+```
+Chương trình sẽ tự động tạo các bảng trong database dựa trên các entity đã định nghĩa.
+
+### 4. Insert Dữ Liệu Mẫu
+1. Mở file `sql/init.sql`
+2. Chạy các câu lệnh INSERT để thêm dữ liệu mẫu:
+   - 4 categories: Điện thoại, Laptop, Phụ kiện, Đồng hồ
+   - 8 products thuộc các categories tương ứng
+
+## API Endpoints
+
+### Products
+- GET `/products` - Lấy danh sách sản phẩm
+- GET `/products/:id` - Lấy chi tiết sản phẩm
+- POST `/products` - Tạo sản phẩm mới
+- PUT `/products/:id` - Cập nhật sản phẩm
+- DELETE `/products/:id` - Xóa sản phẩm
+- POST `/products/upload/:id` - Upload ảnh sản phẩm
+- GET `/products/category/:categoryId` - Lấy sản phẩm theo category
+
+## Lưu ý
+- Đảm bảo SQL Server đang chạy và có thể kết nối được
+- Port mặc định của ứng dụng là 3000
+
 
 ## Compile and run the project
 
@@ -43,56 +75,3 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
