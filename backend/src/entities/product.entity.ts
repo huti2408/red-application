@@ -1,12 +1,7 @@
-
-import {
-    Entity, Column,
-    PrimaryGeneratedColumn, ManyToOne,
-    CreateDateColumn, UpdateDateColumn, JoinColumn
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Category } from './category.entity';
 
-@Entity()
+@Entity('products')
 export class Product {
     @PrimaryGeneratedColumn()
     id: number;
@@ -14,22 +9,25 @@ export class Product {
     @Column()
     productName: string;
 
-    @Column()
-    amount: number;
+    @Column({ nullable: true })
+    imageUrl: string;
 
-    @Column()
-    images: string[];
-
-    @Column({ default: false })
-    outOfStock: boolean;
-
-    @ManyToOne(() => Category, category => category.products, { eager: true })
-    @JoinColumn({ name: "categoryId" })
-    Category: Category;
-
+    @Column({ nullable: true })
+    description: string;
+    
+    @Column('decimal', { precision: 10, scale: 2 })
+    price: number;
+    
     @CreateDateColumn()
-    created_at: Date;
-
+    createdAt: Date;
+    
     @UpdateDateColumn()
-    updated_at: Date;
+    updatedAt: Date;
+    
+    @DeleteDateColumn()
+    deletedAt: Date;
+
+    @ManyToOne(() => Category, category => category.products)
+    @JoinColumn({ name: 'categoryId' })
+    category: Category;
 }
