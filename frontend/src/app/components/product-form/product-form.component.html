@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <h2>{{ product ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới' }}</h2>
+  
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="mt-4">
+    <div class="mb-3">
+      <label for="productName" class="form-label">Tên sản phẩm</label>
+      <input type="text" class="form-control" id="productName" formControlName="productName">
+      <div class="text-danger" *ngIf="productForm.get('productName')?.errors?.['required'] && productForm.get('productName')?.touched">
+        Vui lòng nhập tên sản phẩm
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Mô tả</label>
+      <textarea class="form-control" id="description" formControlName="description"></textarea>
+      <div class="text-danger" *ngIf="productForm.get('description')?.errors?.['required'] && productForm.get('description')?.touched">
+        Vui lòng nhập mô tả
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">Giá</label>
+      <input type="number" class="form-control" id="price" formControlName="price">
+      <div class="text-danger" *ngIf="productForm.get('price')?.errors?.['required'] && productForm.get('price')?.touched">
+        Vui lòng nhập giá
+      </div>
+      <div class="text-danger" *ngIf="productForm.get('price')?.errors?.['min'] && productForm.get('price')?.touched">
+        Giá phải lớn hơn 0
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="categoryId" class="form-label">Danh mục</label>
+      <select class="form-control" id="categoryId" formControlName="categoryId">
+        <option [ngValue]="null">Chọn danh mục</option>
+        <option *ngFor="let category of categories" [ngValue]="category.id">
+          {{ category.categoryName }}
+        </option>
+      </select>
+      <div class="text-danger" *ngIf="productForm.get('categoryId')?.errors?.['required'] && productForm.get('categoryId')?.touched">
+        Vui lòng chọn danh mục
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Hình ảnh</label>
+      <input type="file" class="form-control" id="image" (change)="onFileSelected($event)" accept="image/*">
+      <div class="text-danger" *ngIf="imageError">{{ imageError }}</div>
+    </div>
+
+    <div class="mb-3" *ngIf="imagePreview">
+      <img [src]="imagePreview" alt="Preview" style="max-width: 200px;">
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary me-2" [disabled]="!productForm.valid">
+        {{ product ? 'Cập nhật' : 'Thêm mới' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Hủy</button>
+    </div>
+  </form>
+</div> 

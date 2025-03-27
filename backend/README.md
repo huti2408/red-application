@@ -1,4 +1,3 @@
-
 ## Backend setup
 
 # Backend API
@@ -49,6 +48,9 @@ Chương trình sẽ tự động tạo các bảng trong database dựa trên c
 
 ## API Endpoints
 
+### Categories
+- GET `/categories` - Lấy danh sách categories
+
 ### Products
 - GET `/products` - Lấy danh sách sản phẩm
 - GET `/products/:id` - Lấy chi tiết sản phẩm
@@ -61,7 +63,6 @@ Chương trình sẽ tự động tạo các bảng trong database dựa trên c
 ## Lưu ý
 - Đảm bảo SQL Server đang chạy và có thể kết nối được
 - Port mặc định của ứng dụng là 3000
-
 
 ## Compile and run the project
 

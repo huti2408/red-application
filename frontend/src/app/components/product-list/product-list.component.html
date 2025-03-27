@@ -1,0 +1,25 @@
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên sản phẩm</th>
+          <th>Danh mục</th>
+          <th>Giá</th>
+          <th>Hình ảnh</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.id }}</td>
+          <td>{{ product.productName }}</td>
+          <td>{{ product.category.categoryName }}</td>
+          <td>{{ product.price | currency:'VND' }}</td>
+          <td>
+            <img *ngIf="product.imageUrl" [src]="product.imageUrl" alt="Product image" style="max-width: 50px;">
+          </td>
+          <td>
+            <button class="btn btn-sm btn-info me-2" (click)="onEditProduct(product)">Sửa</button>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(product.id)">Xóa</button>
+          </td>
+        </tr>
+      </tbody> 

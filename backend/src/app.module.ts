@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './products/products.module';
+import { CategoriesModule } from './categories/categories.module';
 import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
 
@@ -23,6 +24,7 @@ import { Category } from './entities/category.entity';
       }
     }),
     ProductsModule,
+    CategoriesModule,
   ],
 })
 export class AppModule { }
