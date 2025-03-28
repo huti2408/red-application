@@ -20,35 +20,36 @@
 
 ### Backend
 
-1. Di chuyển vào thư mục backend:
+#### 1. Di chuyển vào thư mục backend:
 ```bash
 cd backend
 ```
 
-2. Cài đặt dependencies:
+#### 2. Cài đặt dependencies:
 ```bash
 npm install
 ```
-
-3. Cấu hình database trong file `.env`:
+#### 3. Tạo Database và User
+1. Mở SQL Server Management Studio
+2. Kết nối với SQL Server của bạn
+3. Mở file `sql/init.sql` và chạy các câu lệnh SQL để:
+   - Tạo database REDDB
+   - Tạo user red_user với password yourpassword
+   - Cấp quyền db_owner cho user
+#### 4. Cấu hình database trong file `.env`:
 ```
 DB_HOST=localhost
 DB_PORT=1433
 DB_USERNAME=your_username
-DB_PASSWORD=your_password
-DB_DATABASE=RealEstateDoc
+DB_PASSWORD=yourpassword
+DB_DATABASE=REDDB
 ```
 
-4. Chạy migrations:
+#### 5. Khởi động server:
 ```bash
-npm run migration:run
+npm start
 ```
-
-5. Khởi động server:
-```bash
-npm run start:dev
-```
-
+Ứng dụng sẽ chạy tại `http://localhost:3000`
 ### Frontend
 
 1. Di chuyển vào thư mục frontend:
@@ -72,11 +73,13 @@ ng serve
 
 ### Items
 
-- GET /api/items - Lấy danh sách items
-- GET /api/items/:id - Lấy thông tin chi tiết item
-- POST /api/items - Tạo item mới
-- PUT /api/items/:id - Cập nhật item
-- DELETE /api/items/:id - Xóa mềm item
-- GET /api/items/search - Tìm kiếm items
-- GET /api/items/sort - Sắp xếp items
-- POST /api/items/upload - Tải lên file 
+#### Categories
+- GET `/categories` - Lấy danh sách categories
+
+#### Products
+- GET `/products` - Lấy danh sách sản phẩm
+- GET `/products/:id` - Lấy chi tiết sản phẩm
+- POST `/products` - Tạo sản phẩm mới
+- PUT `/products/:id` - Cập nhật sản phẩm
+- DELETE `/products/:id` - Xóa sản phẩm
+- GET `/products/category/:categoryId` - Lấy sản phẩm theo category
