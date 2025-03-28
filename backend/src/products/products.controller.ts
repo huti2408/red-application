@@ -11,79 +11,59 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
-    try {
-      return await this.productsService.create(createProductDto);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Get()
-  async findAll(@Query() query: FindAllProductsDto) {
-    try {
-      return await this.productsService.findAll(query);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Product> {
-    try {
-      return await this.productsService.findOne(+id);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Put(':id')
-  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
-    try {
-      return await this.productsService.update(+id, updateProductDto);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string): Promise<void> {
-    try {
-      return await this.productsService.remove(+id);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Post('upload/:id')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(
-    @Param('id') id: string,
+  @UseInterceptors(FileInterceptor('image'))
+  create(
+    @Body() createProductDto: CreateProductDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5MB
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
           new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/i }),
         ],
+        fileIsRequired: false
       }),
     )
-    file: Express.Multer.File,
-  ): Promise<Product> {
-    try {
-      return await this.productsService.uploadImage(+id, file);
-    } catch (error) {
-      throw error;
-    }
+    file?: Express.Multer.File,
+  ) {
+    return this.productsService.create(createProductDto, file);
+  }
+
+  @Get()
+  findAll(@Query() options: FindAllProductsDto) {
+    return this.productsService.findAll(options);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productsService.findOne(+id);
+  }
+
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/i }),
+        ],
+        fileIsRequired: false
+      }),
+    )
+    file?: Express.Multer.File,
+  ) {
+    return this.productsService.update(+id, updateProductDto, file);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.productsService.remove(+id);
   }
 
   @Get('category/:categoryId')
-  async findByCategory(@Param('categoryId') categoryId: string): Promise<Product[]> {
-    try {
-      return await this.productsService.findByCategory(+categoryId);
-    } catch (error) {
-      throw error;
-    }
+  findByCategory(@Param('categoryId') categoryId: string) {
+    return this.productsService.findByCategory(+categoryId);
   }
 }

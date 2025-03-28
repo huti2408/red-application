@@ -21,6 +21,7 @@ export class ProductFormComponent implements OnInit {
   imagePreview: string | null = null;
   isLoading = false;
   imageError: string | null = null;
+  private baseUrl = 'http://localhost:3000';
 
   constructor(
     private fb: FormBuilder,
@@ -40,11 +41,11 @@ export class ProductFormComponent implements OnInit {
       this.productForm.patchValue({
         productName: this.product.productName,
         description: this.product.description,
-        price: this.product.price,
+        price: Number(this.product.price),
         categoryId: this.product.category.id,
         imageUrl: this.product.imageUrl
       });
-      this.imagePreview = this.product.imageUrl || null;
+      this.imagePreview = this.product.imageUrl ? `${this.baseUrl}${this.product.imageUrl}` : null;
     }
   }
 
@@ -52,7 +53,7 @@ export class ProductFormComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) { 
         this.imageError = 'Kích thước file không được vượt quá 5MB';
         return;
       }
@@ -75,21 +76,13 @@ export class ProductFormComponent implements OnInit {
       const formData = new FormData();
       const formValue = this.productForm.value;
 
-      // Thêm các trường vào FormData
       formData.append('productName', formValue.productName);
       formData.append('description', formValue.description);
       formData.append('price', formValue.price.toString());
       formData.append('categoryId', formValue.categoryId.toString());
 
-      // Xử lý ảnh
       if (this.selectedFile) {
-        // Nếu có file mới được chọn
         formData.append('image', this.selectedFile);
-      }
-
-      // Log để kiểm tra dữ liệu
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
       }
 
       this.submitProduct.emit(formData);

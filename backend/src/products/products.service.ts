@@ -10,18 +10,54 @@ import * as path from 'path';
 
 @Injectable()
 export class ProductsService {
-  private readonly allowedSortFields = ['productName', 'price', 'amount', 'createdAt'];
+  private readonly allowedSortFields = ['productName', 'price', 'createdAt'];
 
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
   ) { }
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
+  private async handleImageUpload(file: Express.Multer.File, productId?: number): Promise<string> {
     try {
+      const uploadDir = path.join(__dirname, '../../uploads');
+
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      // Nếu là cập nhật và có ảnh cũ, xóa ảnh cũ
+      if (productId) {
+        const product = await this.findOne(productId);
+        if (product.imageUrl) {
+          const oldImagePath = path.join(__dirname, '../../', product.imageUrl);
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        }
+      }
+
+      const fileName = `${productId || Date.now()}-${Date.now()}${path.extname(file.originalname)}`;
+      const filePath = path.join(uploadDir, fileName);
+
+      fs.writeFileSync(filePath, file.buffer);
+
+      return `/uploads/${fileName}`;
+    } catch (error) {
+      throw new BadRequestException('Failed to upload image: ' + error.message);
+    }
+  }
+
+  async create(createProductDto: CreateProductDto, file?: Express.Multer.File): Promise<Product> {
+    try {
+      let imageUrl: string | undefined;
+      if (file) {
+        imageUrl = await this.handleImageUpload(file);
+      }
+
       const product = this.productsRepository.create({
         ...createProductDto,
-        category: { id: createProductDto.categoryId }
+        imageUrl: imageUrl,
+        category: { id: createProductDto.categoryId } as any
       });
       return await this.productsRepository.save(product);
     } catch (error) {
@@ -99,15 +135,39 @@ export class ProductsService {
     }
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(id: number, updateProductDto: UpdateProductDto, file?: Express.Multer.File): Promise<Product> {
     try {
       const product = await this.findOne(id);
-      const updatedProduct = {
+      let imageUrl = product.imageUrl;
+
+      if (file) {
+        imageUrl = await this.handleImageUpload(file, id);
+      }
+
+      const updateData: Partial<Product> = {};
+
+      if (updateProductDto.productName !== undefined) {
+        updateData.productName = updateProductDto.productName;
+      }
+      if (updateProductDto.price !== undefined) {
+        updateData.price = Number(updateProductDto.price); 
+      }
+      if (updateProductDto.description !== undefined) {
+        updateData.description = updateProductDto.description;
+      }
+      if (updateProductDto.categoryId !== undefined) {
+        updateData.category = { id: Number(updateProductDto.categoryId) } as any; // Ép kiểu số
+      }
+      if (file) {
+        updateData.imageUrl = imageUrl; 
+      }
+
+      const updatedProduct = await this.productsRepository.save({
         ...product,
-        ...updateProductDto,
-        category: updateProductDto.categoryId ? { id: updateProductDto.categoryId } : product.category
-      };
-      return await this.productsRepository.save(updatedProduct);
+        ...updateData
+      });
+
+      return updatedProduct;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -119,44 +179,18 @@ export class ProductsService {
   async remove(id: number): Promise<void> {
     try {
       const product = await this.findOne(id);
+      if (product.imageUrl) {
+        const imagePath = path.join(__dirname, '../../', product.imageUrl);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      }
       await this.productsRepository.softDelete(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
       throw new BadRequestException('Failed to delete product: ' + error.message);
-    }
-  }
-
-  async uploadImage(id: number, file: Express.Multer.File): Promise<Product> {
-    try {
-      const product = await this.findOne(id);
-      const uploadDir = path.join(__dirname, '../../uploads');
-
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-
-      const fileName = `${id}-${Date.now()}${path.extname(file.originalname)}`;
-      const filePath = path.join(uploadDir, fileName);
-
-      fs.writeFileSync(filePath, file.buffer);
-
-      // Xóa ảnh cũ nếu có
-      if (product.imageUrl) {
-        const oldImagePath = path.join(__dirname, '../../', product.imageUrl);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
-
-      product.imageUrl = `/uploads/${fileName}`;
-      return await this.productsRepository.save(product);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException('Failed to upload image: ' + error.message);
     }
   }
 
