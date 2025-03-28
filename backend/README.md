@@ -16,7 +16,7 @@
 2. Kết nối với SQL Server của bạn
 3. Mở file `sql/init.sql` và chạy các câu lệnh SQL để:
    - Tạo database REDDB
-   - Tạo user red_user với password kCKTXxjrMkLNvD89
+   - Tạo user red_user với password yourpassword
    - Cấp quyền db_owner cho user
 
 #### 1.2. Cấu hình Kết Nối
@@ -25,7 +25,7 @@
 DB_HOST=localhost
 DB_PORT=1433
 DB_USERNAME=red_user
-DB_PASSWORD=kCKTXxjrMkLNvD89
+DB_PASSWORD=yourpassword
 DB_DATABASE=REDDB
 ```
 
@@ -57,7 +57,6 @@ Chương trình sẽ tự động tạo các bảng trong database dựa trên c
 - POST `/products` - Tạo sản phẩm mới
 - PUT `/products/:id` - Cập nhật sản phẩm
 - DELETE `/products/:id` - Xóa sản phẩm
-- POST `/products/upload/:id` - Upload ảnh sản phẩm
 - GET `/products/category/:categoryId` - Lấy sản phẩm theo category
 
 ## Lưu ý
@@ -69,10 +68,4 @@ Chương trình sẽ tự động tạo các bảng trong database dựa trên c
 ```bash
 # development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```

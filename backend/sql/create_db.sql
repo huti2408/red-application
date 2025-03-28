@@ -4,7 +4,7 @@ GO
 USE REDDB;
 GO
 
-CREATE LOGIN red_user WITH PASSWORD = 'kCKTXxjrMkLNvD89';
+CREATE LOGIN red_user WITH PASSWORD = 'yourpassword';
 CREATE USER red_user FOR LOGIN red_user;
 ALTER ROLE db_owner ADD MEMBER red_user;
 GO
