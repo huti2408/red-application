@@ -1,7 +1,3 @@
-# RealEstateDoc Item Management System
-
-Ứng dụng quản lý items với các chức năng cơ bản: tạo, cập nhật, đọc, xóa mềm, sắp xếp, lọc, tìm kiếm và tải lên tài liệu/hình ảnh.
-
 ## Công nghệ sử dụng
 
 - Frontend: Angular 17
